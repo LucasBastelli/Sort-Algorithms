@@ -11,12 +11,12 @@
 
 
 
-typedef struct{
-  unsigned int size;
-  int *list;
+typedef struct{ 
+  unsigned int size; //Tamanho da lista
+  int *list; //Lista
 }set;
 
-typedef struct thread_data {
+typedef struct thread_data { //Informaçoes para quando for rodar benchmark
   unsigned long nb_add;
   unsigned long nb_remove;
   unsigned long nb_contains;
@@ -44,18 +44,19 @@ static inline int rand_range(int n, unsigned short *seed)
   int v = (int)(erand48(seed) * n);
   assert (v >= 0 && v < n);
   return v;
-}
+} //Retorna valor aleatório
 
 void printVetor(set *array){
   unsigned int i=0;
+  printf("\nVetor:\n");
   while(i<array->size){
     printf("%d\n",array->list[i]);
     i++;
   }
-}
+} //Printa o vetor inteiro
 
 /*
-static void *test(void *data)
+static void *test(void *data) //Função com benchmark, ainda não adaptada para o código
 {
   int op, val, last = -1;
   thread_data_t *d = (thread_data_t *)data;
@@ -109,11 +110,10 @@ static void *test(void *data)
 }
 */
 
-int add(int value, set *array, thread_data_t *data){
-  unsigned int tamanho=array->size;
-  if(tamanho<data->range){
-    array->list[tamanho]=value;
-    array->size=tamanho++;
+int add(int value, set *array, int range){ //Testa se está cheio e adiciona na lista
+  if(array->size<range){
+    array->list[array->size]=value;
+    array->size=array->size+1;
     return 1;
   }
   else{
@@ -121,11 +121,11 @@ int add(int value, set *array, thread_data_t *data){
   }
 }
 
-int insertionsort(set *array){
+int insertionsort(set *array){  //Insertion Sort
   unsigned int tamanho=array->size;
   unsigned int aux=0, i=0, j=0;
   for(i=0;i<tamanho;i++){
-    for(j=0;j<tamanho;j++){
+    for(j=0;j<tamanho-1;j++){
       if(array->list[j]>array->list[j+1]){
         aux=array->list[j];
         array->list[j]=array->list[j+1];
@@ -136,7 +136,7 @@ int insertionsort(set *array){
 }
 
 
-int delete(int value, set *array){
+int delete(int value, set *array){ //Remove valor
   unsigned int tamanho=array->size;
   unsigned int aux=0, i=0;
   int aux2;
@@ -157,7 +157,7 @@ int delete(int value, set *array){
 }
 
 
-int main(){
+int main(int argc, char* argv[]){
   set *array;
   thread_data_t *data;
   pthread_t threads;
@@ -171,28 +171,47 @@ int main(){
       exit(1);
   }
   srand((int)time(NULL));
-  data[0].range = 65536;
+  #ifndef DEBUG
+  if(argc<3){
+			printf("\t\tNo arguments\n \t\tHOW TO USE:\n ./program <Size array> <Num. Updates>\nSetting values 10 50\n");
+			sleep(2);
+			data[0].range = 10;
+      data[0].update = 50;  //Para o benchmark
+	}
+  else{
+    data[0].range = atoi(argv[1]);
+    data[0].update = atoi(argv[2]); //Para o benchmark
+  }
+  #else
+  data[0].range = 10;
   data[0].update = 50;
-  data[0].alternate = 1;
+  #endif
+  data[0].alternate = 1; //Para o benchmark
   int duration = 10; //secs
   rand_init(data[0].seed);
-  if ((array->list=(int *)malloc(data[0].range * sizeof(int))) == NULL) {
-    perror("malloc");
+  if ((array->list=(int *)calloc(data[0].range, sizeof(int))) == NULL) { //Aloca o vetor
+    perror("calloc");
     exit(1);
   }
   #ifdef DEBUG
-  printf("tamanho vetor: %d\n",array->size);
+  printf("range: %d\n",data[0].range);
   #endif
   int i=0;
   while(i<(data[0].range/2)){
-      if (add(rand_range(data[0].range, main_seed), array,data)) {
+      if (add(rand_range(data[0].range, main_seed), array, data->range)) { //Preenche a lista
           i++;
       }
   }
   #ifdef DEBUG
+  printf("tamanho vetor: %d\n",array->size);
   printf("i: %d\n",i);
+  printf("vetor0: %d\n",array->list[0]);
+  printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
   #endif
+  printf("Insertion Sort:\n");
+  insertionsort(array);
+  printVetor(array);
   free(data);
   free(array->list);
   free(array);
