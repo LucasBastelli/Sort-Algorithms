@@ -123,6 +123,7 @@ int add(int value, set *array, int range){ //Testa se está cheio e adiciona na 
 
 int insertionsort(set *array){  //Insertion Sort
   unsigned int tamanho=array->size;
+  unsigned int trocas=0;
   unsigned int aux=0, i=0, j=0;
   for(i=0;i<tamanho;i++){
     for(j=0;j<tamanho-1;j++){
@@ -130,9 +131,11 @@ int insertionsort(set *array){  //Insertion Sort
         aux=array->list[j];
         array->list[j]=array->list[j+1];
         array->list[j+1]=aux;
+        trocas=trocas+1;
       }
     }
   }
+  return(trocas); //Total de trocas
 }
 
 
@@ -208,10 +211,10 @@ int main(int argc, char* argv[]){
   printf("vetor0: %d\n",array->list[0]);
   printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
-  #endif
   printf("Insertion Sort:\n");
   insertionsort(array);
   printVetor(array);
+  #endif
   free(data);
   free(array->list);
   free(array);
