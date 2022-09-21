@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
   srand((int)time(NULL));
   #ifndef DEBUG
   if(argc<2){
-			printf("\t\tNo arguments\n \t\tHOW TO USE:\n ./program <Size array>\nSetting values 256\n");
+			printf("\t\tNo arguments\n \t\tHOW TO USE:\n ./program <Size array>\nSetting size 256\n");
 			sleep(2);
 			range = 256;
 	}
