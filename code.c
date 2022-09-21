@@ -75,7 +75,57 @@ int selectionsort(set *array){ //Selection Sort
 	}
 	return(trocas);
 	}
+int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
+	set *array2;
+	unsigned int i=0,j=0,k=0;
+	unsigned int trocas=0;
+	if ((array2 = (set *)malloc(1 * sizeof(set))) == NULL) {
+	     perror("malloc");
+	     exit(1);
+	 }
+	 if ((array2->list=(int *)calloc(256, sizeof(int))) == NULL) { //Aloca o vetor
+	    perror("calloc");
+	    exit(1);
+	 }
 
+	 for(i=p;i<=q;i++){
+		array2->list[i]=array->list[i];
+	   	array2->size=array2->size+1;
+	}
+	for(j=q+1;j<=r;j++){
+		array2->list[r+q+1-j]=array->list[j];
+	    	array2->size=array2->size+1;
+	}
+	i=p;
+	j=r;
+	
+	for (k=p;k<=r;k++){
+		trocas=trocas+1;//aki?
+		if(array2->list[i]<=array2->list[j]){
+			array->list[k]=array2->list[i];
+			i=i+1;
+		}
+		else{
+			array->list[k]=array2->list[j];
+			j=j-1;
+		}
+	}
+	  free(array2->list);
+	  free(array2);
+	  return(trocas);
+}
+
+int mergesort(set *array,int p, int r){ //Merge sort
+	unsigned int q;
+	unsigned int trocas=0;
+	if (p<r){
+		q=(p+r)/2;
+		trocas=trocas+mergesort(array,p,q);
+		trocas=trocas+mergesort(array,q+1,r);
+		trocas=trocas+intercala(array,p,q,r);
+	}
+	return(trocas);
+}
 
 int delete(int value, set *array){ //Remove valor
   unsigned int tamanho=array->size;
