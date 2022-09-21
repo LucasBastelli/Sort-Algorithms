@@ -56,6 +56,25 @@ int insertionsort(set *array){  //Insertion Sort
   return(trocas); //Total de trocas
 }
 
+int selectionsort(set *array){ //Selection Sort
+	unsigned int tamanho=array->size;
+	unsigned int trocas=0;
+	unsigned int aux=0,aux2=0, i=0, j=0;
+	for(i=0;i<tamanho-1;i++){
+		aux=i;
+		for (j=i+1;j<tamanho;j++){
+			if(array->list[j]<array->list[aux]){
+				aux=j;
+			}
+		}
+		aux2=array->list[aux];
+		array->list[aux]=array->list[i];
+		array->list[i]=aux2;
+		trocas=trocas+1;//aki?
+	}
+	return(trocas);
+}
+
 
 int delete(int value, set *array){ //Remove valor
   unsigned int tamanho=array->size;
