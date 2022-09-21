@@ -67,13 +67,15 @@ int selectionsort(set *array){ //Selection Sort
 				aux=j;
 			}
 		}
-		aux2=array->list[aux];
-		array->list[aux]=array->list[i];
-		array->list[i]=aux2;
-		trocas=trocas+1;//aki?
+		if(aux!=i){
+			aux2=array->list[aux];
+			array->list[aux]=array->list[i];
+			array->list[i]=aux2;
+			trocas=trocas+1;
+		}
 	}
 	return(trocas);
-}
+	}
 
 
 int delete(int value, set *array){ //Remove valor
