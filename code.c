@@ -38,95 +38,6 @@ int add(int value, set *array, int range){ //Testa se está cheio e adiciona na 
   }
 }
 
-int insertionsort(set *array){  //Insertion Sort
-  unsigned int tamanho=array->size;
-  unsigned int trocas=0;
-  unsigned int aux=0, i=0, j=0;
-  for(i=0;i<tamanho;i++){
-    for(j=0;j<tamanho-1;j++){
-      if(array->list[j]>array->list[j+1]){
-        aux=array->list[j];
-        array->list[j]=array->list[j+1];
-        array->list[j+1]=aux;
-        trocas=trocas+1;
-      }
-    }
-  }
-  return(trocas); //Total de trocas
-}
-
-int selectionsort(set *array){ //Selection Sort
-	unsigned int tamanho=array->size;
-	unsigned int trocas=0;
-	unsigned int aux=0,aux2=0, i=0, j=0;
-	for(i=0;i<tamanho-1;i++){
-		aux=i;
-		for (j=i+1;j<tamanho;j++){
-			if(array->list[j]<array->list[aux]){
-				aux=j;
-			}
-		}
-		if(aux!=i){
-			aux2=array->list[aux];
-			array->list[aux]=array->list[i];
-			array->list[i]=aux2;
-			trocas=trocas+1;
-		}
-	}
-	return(trocas);
-	}
-int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
-	set *array2;
-	unsigned int i=0,j=0,k=0;
-	unsigned int trocas=0;
-	if ((array2 = (set *)malloc(1 * sizeof(set))) == NULL) {
-	     perror("malloc");
-	     exit(1);
-	 }
-	 if ((array2->list=(int *)calloc(256, sizeof(int))) == NULL) { //Aloca o vetor
-	    perror("calloc");
-	    exit(1);
-	 }
-
-	 for(i=p;i<=q;i++){
-		array2->list[i]=array->list[i];
-	   	array2->size=array2->size+1;
-	}
-	for(j=q+1;j<=r;j++){
-		array2->list[r+q+1-j]=array->list[j];
-	    	array2->size=array2->size+1;
-	}
-	i=p;
-	j=r;
-	
-	for (k=p;k<=r;k++){
-		trocas=trocas+1;//aki?
-		if(array2->list[i]<=array2->list[j]){
-			array->list[k]=array2->list[i];
-			i=i+1;
-		}
-		else{
-			array->list[k]=array2->list[j];
-			j=j-1;
-		}
-	}
-	  free(array2->list);
-	  free(array2);
-	  return(trocas);
-}
-
-int mergesort(set *array,int p, int r){ //Merge sort
-	unsigned int q;
-	unsigned int trocas=0;
-	if (p<r){
-		q=(p+r)/2;
-		trocas=trocas+mergesort(array,p,q);
-		trocas=trocas+mergesort(array,q+1,r);
-		trocas=trocas+intercala(array,p,q,r);
-	}
-	return(trocas);
-}
-
 int delete(int value, set *array){ //Remove valor
   unsigned int tamanho=array->size;
   unsigned int aux=0, i=0;
@@ -147,6 +58,103 @@ int delete(int value, set *array){ //Remove valor
   array->size=tamanho--;
 }
 
+#ifdef INSERTIONSORT
+int sort(set *array){  //Insertion Sort
+  unsigned int tamanho=array->size;
+  unsigned int trocas=0, posicoes=0;
+  unsigned int aux=0, i=0, j=0;
+  for(i=0;i<tamanho;i++){
+    for(j=0;j<tamanho-1;j++){
+      if(array->list[j]>array->list[j+1]){
+        aux=array->list[j];
+        array->list[j]=array->list[j+1];
+        array->list[j+1]=aux;
+        trocas=trocas+1;
+      }
+      posicoes=posicoes+1;
+    }
+  }
+  return(trocas); //Total de trocas
+}
+#endif
+
+#ifdef SELECTIONSORT
+int sort(set *array){ //Selection Sort
+	unsigned int tamanho=array->size;
+	unsigned int trocas=0, posicoes=0;
+	unsigned int aux=0,aux2=0, i=0, j=0;
+	for(i=0;i<tamanho-1;i++){
+		aux=i;
+		for (j=i+1;j<tamanho;j++){
+			if(array->list[j]<array->list[aux]){
+				aux=j;
+        posicoes=posicoes+1;
+			}
+		}
+		if(aux!=i){
+			aux2=array->list[aux];
+			array->list[aux]=array->list[i];
+			array->list[i]=aux2;
+			trocas=trocas+1;
+		}
+	}
+	return(trocas);
+}
+#endif
+
+#ifdef MERGESORT
+int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
+	set *array2;
+	unsigned int i=0,j=0,k=0;
+	unsigned int trocas=0;
+	if ((array2 = (set *)malloc(1 * sizeof(set))) == NULL) {
+	     perror("malloc");
+	     exit(1);
+	 }
+	 if ((array2->list=(int *)calloc(r, sizeof(int))) == NULL) { //Aloca o vetor
+	    perror("calloc");
+	    exit(1);
+	 }
+
+	 for(i=p;i<=q;i++){
+		array2->list[i]=array->list[i];
+	  array2->size=array2->size+1;
+	}
+	for(j=q+1;j<=r;j++){
+		array2->list[r+q+1-j]=array->list[j];
+	  array2->size=array2->size+1;
+	}
+	i=p;
+	j=r;
+	
+	for (k=p;k<=r;k++){
+		trocas=trocas+1;//aki?
+		if(array2->list[i]<=array2->list[j]){
+			array->list[k]=array2->list[i];
+			i=i+1;
+		}
+		else{
+			array->list[k]=array2->list[j];
+			j=j-1;
+		}
+	}
+	  free(array2->list);
+	  free(array2);
+	  return(trocas);
+}
+
+int sort(set *array,int p, int r){ //Merge sort
+	unsigned int q;
+	unsigned int trocas=0;
+	if (p<r){
+		q=(p+r)/2;
+		trocas=trocas+sort(array,p,q);
+		trocas=trocas+sort(array,q+1,r);
+		trocas=trocas+intercala(array,p,q,r);
+	}
+	return(trocas);
+}
+#endif
 
 int main(int argc, char* argv[]){
   set *array;
@@ -160,10 +168,10 @@ int main(int argc, char* argv[]){
   if(argc<2){
 			printf("\t\tNo arguments\n \t\tHOW TO USE:\n ./program <Size array>\nSetting size 256\n");
 			sleep(2);
-			range = 256;
+			range = 2*256;
 	}
   else{
-    range = atoi(argv[1]);
+    range = 2*(atoi(argv[1]));
   }
   #else
   range = 10;
@@ -187,11 +195,15 @@ int main(int argc, char* argv[]){
   printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
   printf("Insertion Sort:\n");
-  insertionsort(array);
+  printf("Trocas: %d\n",sort(array,0,array->size));
   printVetor(array);
   #endif
   printf("tamanho vetor: %d\n",array->size);
-  printf("Trocas: %d\n",insertionsort(array));
+  #ifdef MERGESORT
+  printf("Trocas: %d\n",sort(array,0,array->size-1));
+  #else
+  printf("Trocas: %d\n",sort(array));
+  #endif
   free(array->list);
   free(array);
   exit(0);
