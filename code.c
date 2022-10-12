@@ -106,7 +106,7 @@ int sort(set *array){ //Selection Sort
 int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
 	set *array2;
 	unsigned int i=0,j=0,k=0;
-	unsigned int trocas=0;
+	unsigned int trocas=0, posicoes=0;
 	if ((array2 = (set *)malloc(1 * sizeof(set))) == NULL) {
 	     perror("malloc");
 	     exit(1);
@@ -119,8 +119,10 @@ int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
 	 for(i=p;i<=q;i++){
 		array2->list[i]=array->list[i];
 	  array2->size=array2->size+1;
+    posicoes=posicoes+1;
 	}
 	for(j=q+1;j<=r;j++){
+    posicoes=posicoes+1;
 		array2->list[r+q+1-j]=array->list[j];
 	  array2->size=array2->size+1;
 	}
@@ -128,12 +130,14 @@ int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
 	j=r;
 	
 	for (k=p;k<=r;k++){
-		trocas=trocas+1;//aki?
+    posicoes=posicoes+1;
 		if(array2->list[i]<=array2->list[j]){
+      trocas=trocas+1;
 			array->list[k]=array2->list[i];
 			i=i+1;
 		}
 		else{
+      trocas=trocas+1;
 			array->list[k]=array2->list[j];
 			j=j-1;
 		}
@@ -153,6 +157,60 @@ int sort(set *array,int p, int r){ //Merge sort
 		trocas=trocas+intercala(array,p,q,r);
 	}
 	return(trocas);
+}
+#endif
+
+#ifdef QUICKSORT
+int partition(int Esq, int Dir, int *i, int *j, set *array)
+{ 
+  int x, w;
+  *i = Esq;
+  *j = Dir;
+  int troca=0,posicoes=0;
+
+  //pivo
+  x = array->list[(*i+*j)/2];
+
+  do
+  { 
+    while(x > array->list[*i]){
+         posicoes=posicoes+1;
+         (*i)++;
+         }
+    while(x < array->list[*j]){
+        posicoes=posicoes+1;
+        (*j)--;
+        }
+    if(*i <=*j)
+    { 
+      w = array->list[*i];
+      array->list[*i] = array->list[*j];
+      array->list[*j] = w;
+      (*i)++;
+      (*j)--;
+      troca=troca+1;
+    }
+  } while (*i<=*j);
+  return troca;
+}
+
+
+int quicksort(int Esq, int Dir, set *v)
+{ 
+  int i,j,troca=0;
+  troca=troca+partition(Esq, Dir, &i, &j, v);
+  if (Esq < j)
+     troca=troca+quicksort(Esq, j, v);
+  if (i < Dir)
+     troca=troca+quicksort(i, Dir, v);
+  return troca;
+}
+
+int sort(set *array)
+{ 
+  int troca=0;
+  troca = quicksort(0, array->size-1, array);
+  return troca; 
 }
 #endif
 
@@ -195,7 +253,7 @@ int main(int argc, char* argv[]){
   printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
   printf("Insertion Sort:\n");
-  printf("Trocas: %d\n",sort(array,0,array->size));
+  printf("Trocas: %d\n",sort(array));
   printVetor(array);
   #endif
   printf("tamanho vetor: %d\n",array->size);
