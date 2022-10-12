@@ -274,7 +274,7 @@ int main(int argc, char* argv[]){
   #else
   range = 10;
   #endif
-  int seed=42;
+  int seed=time(NULL);
   srandom(seed);   // Initialization, should only be called once.
   if ((array->list=(int *)calloc(range, sizeof(int))) == NULL) { //Aloca o vetor
     perror("calloc");
@@ -293,7 +293,7 @@ int main(int argc, char* argv[]){
   printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
   printf("Insertion Sort:\n");
-  printf("Trocas: %d\n",sort(array));
+  printf("Trocas: %d\n",sort(array,0,array->size-1));
   printVetor(array);
   #endif
   printf("tamanho vetor: %d\n",array->size);
