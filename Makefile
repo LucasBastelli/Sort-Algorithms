@@ -1,14 +1,23 @@
-PROGRAMS = trab1 trab1-DB
+PROGRAMS = trab-insertion trab-DB trab-selection trab-merge trab-quick
 
 CC = gcc
 
 all:	$(PROGRAMS)
 
-trab1:	trab1.c
-	gcc -o trab1 trab1.c
+trab-insertion:	trab.c
+	gcc -O3 -o trab-insertion trab.c -pthread -DINSERTIONSORT
 
-trab1-DB: trab1.c
-	gcc -o trab1-DB trab1.c -DDEBUG
+trab-selection:	trab.c
+	gcc  -O3 -o trab-selection trab.c -pthread -DSELECTIONSORT
+
+trab-merge:	trab.c
+	gcc -O3 -o trab-merge trab.c -pthread -DMERGESORT
+
+trab-quick:	trab.c
+	gcc -O3 -o trab-quick trab.c -pthread -DQUICKSORT
+
+trab-DB: trab.c
+	gcc -O0 -o trab-DB trab.c -pthread -DDEBUG -DQUICKSORT
 
 
 
