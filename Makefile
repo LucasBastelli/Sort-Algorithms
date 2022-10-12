@@ -1,4 +1,4 @@
-PROGRAMS = trab-insertion trab-DB trab-selection trab-merge trab-quick
+PROGRAMS = trab-insertion trab-DB trab-selection trab-merge trab-quick trab-heap
 
 CC = gcc
 
@@ -16,8 +16,11 @@ trab-merge:	trab.c
 trab-quick:	trab.c
 	gcc -O3 -o trab-quick trab.c -pthread -DQUICKSORT
 
+trab-heap:	trab.c
+	gcc -O3 -o trab-heap trab.c -pthread -DHEAPSORT
+
 trab-DB: trab.c
-	gcc -O0 -o trab-DB trab.c -pthread -DDEBUG -DQUICKSORT
+	gcc -O0 -o trab-DB trab.c -pthread -DDEBUG -DHEAPSORT
 
 
 
