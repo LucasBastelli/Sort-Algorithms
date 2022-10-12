@@ -59,9 +59,9 @@ int delete(int value, set *array){ //Remove valor
 }
 
 #ifdef INSERTIONSORT
-int sort(set *array){  //Insertion Sort
+unsigned long int sort(set *array){  //Insertion Sort
   unsigned int tamanho=array->size;
-  unsigned int trocas=0, posicoes=0;
+  unsigned long int trocas=0, posicoes=0;
   unsigned int aux=0, i=0, j=0;
   for(i=0;i<tamanho;i++){
     for(j=0;j<tamanho-1;j++){
@@ -79,9 +79,9 @@ int sort(set *array){  //Insertion Sort
 #endif
 
 #ifdef SELECTIONSORT
-int sort(set *array){ //Selection Sort
+unsigned long int sort(set *array){ //Selection Sort
 	unsigned int tamanho=array->size;
-	unsigned int trocas=0, posicoes=0;
+	unsigned long int trocas=0, posicoes=0;
 	unsigned int aux=0,aux2=0, i=0, j=0;
 	for(i=0;i<tamanho-1;i++){
 		aux=i;
@@ -103,11 +103,11 @@ int sort(set *array){ //Selection Sort
 #endif
 
 #ifdef MERGESORT
-int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
+unsigned long int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
 	int i, j, k;
   int n1 = q - p + 1;
   int n2 = r - q;
-  int trocas = 0;
+  unsigned long int trocas = 0;
   /* create temp arrays */
   int left[n1], right[n2];
 
@@ -146,9 +146,9 @@ int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
   return (trocas);
 }
 
-int sort(set *array,int p, int r){ //Merge sort
+unsigned long int sort(set *array,int p, int r){ //Merge sort
 	unsigned int q;
-	unsigned int trocas=0;
+	unsigned long int trocas=0;
 	if (p<r){
 		q=p+(r-p)/2;
 		trocas=trocas+sort(array,p,q);
@@ -160,12 +160,12 @@ int sort(set *array,int p, int r){ //Merge sort
 #endif
 
 #ifdef QUICKSORT
-int partition(int Esq, int Dir, int *i, int *j, set *array)
+unsigned long int partition(int Esq, int Dir, int *i, int *j, set *array)
 { 
   int x, w;
   *i = Esq;
   *j = Dir;
-  int troca=0,posicoes=0;
+  unsigned long int troca=0,posicoes=0;
 
   //pivo
   x = array->list[(*i+*j)/2];
@@ -194,9 +194,10 @@ int partition(int Esq, int Dir, int *i, int *j, set *array)
 }
 
 
-int quicksort(int Esq, int Dir, set *v)
+unsigned long int quicksort(int Esq, int Dir, set *v)
 { 
-  int i,j,troca=0;
+  int i,j;
+  unsigned long int troca=0;
   troca=troca+partition(Esq, Dir, &i, &j, v);
   if (Esq < j)
      troca=troca+quicksort(Esq, j, v);
@@ -205,9 +206,9 @@ int quicksort(int Esq, int Dir, set *v)
   return troca;
 }
 
-int sort(set *array)
+unsigned long int sort(set *array)
 { 
-  int troca=0;
+  unsigned long int troca=0;
   troca = quicksort(0, array->size-1, array);
   return troca; 
 }
@@ -220,11 +221,11 @@ void swap(int *a, int *b) {
   *b = temp;
 }
 
-int heapify(set *array, int n, int i) {
+unsigned long int heapify(set *array, int n, int i) {
   int largest = i;
   int left = 2 * i + 1;
   int right = 2 * i + 2;
-  int trocas=0;
+  unsigned long int trocas=0;
 
   if (left < n && array->list[left] > array->list[largest])
     largest = left;
@@ -240,8 +241,8 @@ int heapify(set *array, int n, int i) {
   return trocas;
 }
 
-int sort(set *array) {
-  int trocas=0;
+unsigned long int sort(set *array) {
+  unsigned long int trocas=0;
   for (int i = array->size / 2 - 1; i >= 0; i--)
     heapify(array, array->size, i);
 
@@ -293,14 +294,14 @@ int main(int argc, char* argv[]){
   printf("vetor1: %d\n",array->list[1]);
   printVetor(array);
   printf("Insertion Sort:\n");
-  printf("Trocas: %d\n",sort(array,0,array->size-1));
+  printf("Trocas: %lu\n",sort(array,0,array->size-1));
   printVetor(array);
   #endif
   printf("tamanho vetor: %d\n",array->size);
   #ifdef MERGESORT
-  printf("Trocas: %d\n",sort(array,0,array->size-1));
+  printf("Trocas: %lu\n",sort(array,0,array->size-1));
   #else
-  printf("Trocas: %d\n",sort(array));
+  printf("Trocas: %lu\n",sort(array));
   #endif
   free(array->list);
   free(array);
