@@ -5,7 +5,7 @@ import sys
 import numpy
 from scipy.stats import bootstrap
 
-def rodar(arq,rep,Tamanho,update,programa):
+def rodar(arq,rep,Tamanho,programa):
 	aux=1
 	while(aux<=rep):			#Quantidade de repeticoes
 		print("Repetição "+str(aux)+" de "+str(rep)) 
@@ -17,23 +17,13 @@ def rodar(arq,rep,Tamanho,update,programa):
 		
 	return
 
-def GrafSpeedup(arq,x,y1,y2,y3):
-	count=0
-	plt.yscale("log")
-	graph1=[]
-	graph2=[]
-	graph3=[]
-	Sizex=['128', '256', '512', '1024', '2048','4096','8192','16384','32768','65536']
-	while(count<len(y1)):
-		graph1.append(y1[count]/y1[count])
-		graph2.append(y2[count]/y1[count])
-		graph3.append(y3[count]/y1[count])
-		count+=1
-	plt.plot(x, graph1, color = 'navy' )
-	plt.plot(x, graph2, color = 'red' )
-	plt.plot(x, graph3, color = 'green' )
-	plt.legend(labels=['RAM/RAM', 'PM/RAM','HD/RAM'])
-	plt.savefig(arq+"/graficoSpeedUpRAM.pdf")
+def GrafSpeedup(arq,x,y,error1):
+	Sizex=[]
+	for valor in x:
+		Sizex.append(str(valor))
+	plt.plot(x, y, color = 'navy')
+	plt.xticks(x,Sizex)
+	plt.savefig(arq+"/grafico.pdf")
 	
 	
 
@@ -150,40 +140,32 @@ def enumera(lista):					#Remove os textos,deixando apenas os numeros
 		for line in lista:
 			valor=''
 			line=str(line)
-			line=re.sub(r'#txs          : ','',line)
-			line=re.sub(r' / s','',line)
-			line=list(line)
-			x=0
-			while(line[x]!='('):
-				x+=1
-			x+=1
-			while(line[x]!=')'):
-				valor=valor+line[x]
-				x+=1
-			retornar.append(eval(valor))
+			line=re.sub(r'Trocas: ','',line)
+			retornar.append(eval(line))
 	else:
 		valor=''
 		lista=str(lista)
-		lista=re.sub(r'#txs          : ','',lista)
-		lista=re.sub(r' / s','',lista)
-		lista=list(lista)
-		x=0
-		while(lista[x]!='('):
-			x+=1
-		x+=1
-		while(lista[x]!=')'):
-			valor=valor+lista[x]
-			x+=1
-		retornar=eval(valor)
+		lista=re.sub(r'Trocas: ','',lista)
+		retornar=eval(lista)
 		
 	return retornar
 
 def main(arg):
 	rep=10					#Quantas vezes ira repetir
+	'''
+	tam_ini=128
+	aumentar=15
+	tamanho=[]
+	while(aumentar>0):
+		tamanho.append(tam_ini)
+		tam_ini=tam_ini*2
+		aumentar-=1
+	'''
 	tamanho=[128,256,512,1024,2048,4096,8192,16384,32768,65536]
-	programa="./trab1"
-	arq="/test"
-	txt='#txs          :'
+	print(tamanho)
+	programa="./trab-selection"
+	arq="test_selection"
+	txt='Trocas: '
 	arq=mkdir(arq)
 	x=[]
 	intervalo=[]
@@ -199,7 +181,21 @@ def main(arg):
 		criaIndice(arq,rep,tamanho)
 		rodar(arq,rep,tamanho,programa)
 		return		
-	
+
+	elif(arg[1]=='g'):
+		intervalo=[]
+		indice=abrirIndice(arq)
+		rep=indice[0]
+		indice.pop(0)
+		indice=indice[0]
+		x,y=abrirRAW(txt,arq,rep,indice)
+		for lista in y:
+			data = (lista,)
+			#intervalo.append(IntConfianca(lista))
+			var=(bootstrap(data, numpy.std, confidence_level=0.95))
+			intervalo.append([var.confidence_interval[1],var.confidence_interval[0]])
+		GrafSpeedup(arq,x,y,numpy.array(intervalo))
+
 	elif(arg[1]=='c'):
 		intervalo=[]
 		intervalo2=[]
