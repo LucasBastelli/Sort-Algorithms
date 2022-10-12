@@ -104,54 +104,53 @@ int sort(set *array){ //Selection Sort
 
 #ifdef MERGESORT
 int intercala(set *array, int p, int q, int r){ //Intercala do Merge sort
-	set *array2;
-	unsigned int i=0,j=0,k=0;
-	unsigned int trocas=0, posicoes=0;
-	if ((array2 = (set *)malloc(1 * sizeof(set))) == NULL) {
-	     perror("malloc");
-	     exit(1);
-	 }
-	 if ((array2->list=(int *)calloc(r, sizeof(int))) == NULL) { //Aloca o vetor
-	    perror("calloc");
-	    exit(1);
-	 }
+	int i, j, k;
+  int n1 = q - p + 1;
+  int n2 = r - q;
+  int trocas = 0;
+  /* create temp arrays */
+  int left[n1], right[n2];
 
-	 for(i=p;i<=q;i++){
-		array2->list[i]=array->list[i];
-	  array2->size=array2->size+1;
-    posicoes=posicoes+1;
-	}
-	for(j=q+1;j<=r;j++){
-    posicoes=posicoes+1;
-		array2->list[r+q+1-j]=array->list[j];
-	  array2->size=array2->size+1;
-	}
-	i=p;
-	j=r;
-	
-	for (k=p;k<=r;k++){
-    posicoes=posicoes+1;
-		if(array2->list[i]<=array2->list[j]){
+  /* Copy data to temp arrays L[] and R[] */
+  for (i = 0; i < n1; i++)
+      left[i] = array->list[p + i];
+  for (j = 0; j < n2; j++)
+      right[j] = array->list[q + 1 + j];
+
+  i = 0;
+  j = 0;
+  k = p;
+  while (i < n1 && j < n2) {
+      if (left[i] <= right[j]) {
+          array->list[k] = left[i];
+          i++;
+      }
+      else {
+          array->list[k] = right[j];
+          j++;
+      }
+      k++;
+  }
+  while (i < n1) {
+      array->list[k] = left[i];
       trocas=trocas+1;
-			array->list[k]=array2->list[i];
-			i=i+1;
-		}
-		else{
+      i++;
+      k++;
+  }
+  while (j < n2) {
+      array->list[k] = right[j];
       trocas=trocas+1;
-			array->list[k]=array2->list[j];
-			j=j-1;
-		}
-	}
-	  free(array2->list);
-	  free(array2);
-	  return(trocas);
+      j++;
+      k++;
+  }
+  return (trocas);
 }
 
 int sort(set *array,int p, int r){ //Merge sort
 	unsigned int q;
 	unsigned int trocas=0;
 	if (p<r){
-		q=(p+r)/2;
+		q=p+(r-p)/2;
 		trocas=trocas+sort(array,p,q);
 		trocas=trocas+sort(array,q+1,r);
 		trocas=trocas+intercala(array,p,q,r);
@@ -211,6 +210,47 @@ int sort(set *array)
   int troca=0;
   troca = quicksort(0, array->size-1, array);
   return troca; 
+}
+#endif
+
+#ifdef HEAPSORT
+void swap(int *a, int *b) {
+  int temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+int heapify(set *array, int n, int i) {
+  int largest = i;
+  int left = 2 * i + 1;
+  int right = 2 * i + 2;
+  int trocas=0;
+
+  if (left < n && array->list[left] > array->list[largest])
+    largest = left;
+
+  if (right < n && array->list[right] > array->list[largest])
+    largest = right;
+
+  if (largest != i) {
+    swap(&array->list[i], &array->list[largest]);
+    trocas=trocas+1;
+    trocas=trocas+heapify(array, n, largest);
+  }
+  return trocas;
+}
+
+int sort(set *array) {
+  int trocas=0;
+  for (int i = array->size / 2 - 1; i >= 0; i--)
+    heapify(array, array->size, i);
+
+  for (int i = array->size - 1; i >= 0; i--) {
+    swap(&array->list[0], &array->list[i]);
+    trocas=trocas+1;
+    trocas=trocas+heapify(array, i, 0);
+  }
+  return trocas;
 }
 #endif
 
