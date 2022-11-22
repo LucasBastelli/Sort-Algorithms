@@ -20,7 +20,7 @@ trab-heap:	trab.c
 	gcc -O3 -o trab-heap trab.c -pthread -DHEAPSORT
 
 trab-DB: trab.c
-	gcc -O0 -o trab-DB trab.c -pthread -DDEBUG -DHEAPSORT
+	gcc -O0 -o trab-DB trab.c -pthread -DDEBUG -DMERGESORT
 
 
 
