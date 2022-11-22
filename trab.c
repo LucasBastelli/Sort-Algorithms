@@ -74,21 +74,21 @@ unsigned long int sort(set *array){  //Insertion Sort
       posicoes=posicoes+1;
     }
   }
-  return(trocas); //Total de trocas
+  return(posicoes); //Total de trocas
 }
 #endif
 
 #ifdef SELECTIONSORT
 unsigned long int sort(set *array){ //Selection Sort
 	unsigned int tamanho=array->size;
-	unsigned long int trocas=0, posicoes=0;
+	unsigned long int trocas=0, andou=0;
 	unsigned int aux=0,aux2=0, i=0, j=0;
 	for(i=0;i<tamanho-1;i++){
 		aux=i;
 		for (j=i+1;j<tamanho;j++){
+      andou=andou+1;
 			if(array->list[j]<array->list[aux]){
 				aux=j;
-        posicoes=posicoes+1;
 			}
 		}
 		if(aux!=i){
@@ -98,7 +98,7 @@ unsigned long int sort(set *array){ //Selection Sort
 			trocas=trocas+1;
 		}
 	}
-	return(trocas);
+	return(andou);
 }
 #endif
 
@@ -107,7 +107,7 @@ unsigned long int intercala(set *array, int p, int q, int r){ //Intercala do Mer
 	int i, j, k;
   int n1 = q - p + 1;
   int n2 = r - q;
-  unsigned long int trocas = 0;
+  unsigned long int trocas = 0, posicoes=0;
   /* create temp arrays */
   int left[n1], right[n2];
 
@@ -129,6 +129,7 @@ unsigned long int intercala(set *array, int p, int q, int r){ //Intercala do Mer
           array->list[k] = right[j];
           j++;
       }
+      posicoes=posicoes+1;
       k++;
   }
   while (i < n1) {
@@ -143,7 +144,7 @@ unsigned long int intercala(set *array, int p, int q, int r){ //Intercala do Mer
       j++;
       k++;
   }
-  return (trocas);
+  return (posicoes);
 }
 
 unsigned long int sort(set *array,int p, int r){ //Merge sort
@@ -173,11 +174,9 @@ unsigned long int partition(int Esq, int Dir, int *i, int *j, set *array)
   do
   { 
     while(x > array->list[*i]){
-         posicoes=posicoes+1;
          (*i)++;
          }
     while(x < array->list[*j]){
-        posicoes=posicoes+1;
         (*j)--;
         }
     if(*i <=*j)
@@ -225,7 +224,7 @@ unsigned long int heapify(set *array, int n, int i) {
   int largest = i;
   int left = 2 * i + 1;
   int right = 2 * i + 2;
-  unsigned long int trocas=0;
+  unsigned long int trocas=0, posicoes = 0;
 
   if (left < n && array->list[left] > array->list[largest])
     largest = left;
@@ -236,28 +235,30 @@ unsigned long int heapify(set *array, int n, int i) {
   if (largest != i) {
     swap(&array->list[i], &array->list[largest]);
     trocas=trocas+1;
-    trocas=trocas+heapify(array, n, largest);
+    posicoes=posicoes+heapify(array, n, largest);
   }
-  return trocas;
+  posicoes=posicoes+3;//3 ifs
+  return posicoes;
 }
 
 unsigned long int sort(set *array) {
-  unsigned long int trocas=0;
+  unsigned long int trocas=0, posicoes = 0;
   for (int i = array->size / 2 - 1; i >= 0; i--)
     heapify(array, array->size, i);
 
   for (int i = array->size - 1; i >= 0; i--) {
     swap(&array->list[0], &array->list[i]);
     trocas=trocas+1;
-    trocas=trocas+heapify(array, i, 0);
+    posicoes=posicoes+heapify(array, i, 0);
   }
-  return trocas;
+  return posicoes;
 }
 #endif
 
 int main(int argc, char* argv[]){
   set *array;
   int range=0;
+  struct timespec tstart={0,0}, tend={0,0};
   if ((array = (set *)malloc(1 * sizeof(set))) == NULL) {
       perror("malloc");
       exit(1);
@@ -296,13 +297,24 @@ int main(int argc, char* argv[]){
   printf("Insertion Sort:\n");
   printf("Trocas: %lu\n",sort(array,0,array->size-1));
   printVetor(array);
+  clock_gettime(CLOCK_MONOTONIC, &tstart);
+  sleep(1);
+  clock_gettime(CLOCK_MONOTONIC, &tend);
+    printf("Time %.5f seconds\n",
+           ((double)tend.tv_sec + 1.0e-9*tend.tv_nsec) - 
+           ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec));
   #endif
   printf("tamanho vetor: %d\n",array->size);
+  clock_gettime(CLOCK_MONOTONIC, &tstart);
   #ifdef MERGESORT
   printf("Trocas: %lu\n",sort(array,0,array->size-1));
   #else
   printf("Trocas: %lu\n",sort(array));
   #endif
+  clock_gettime(CLOCK_MONOTONIC, &tend);
+    printf("Time %.5f seconds\n",
+           ((double)tend.tv_sec + 1.0e-9*tend.tv_nsec) - 
+           ((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec));
   free(array->list);
   free(array);
   exit(0);
